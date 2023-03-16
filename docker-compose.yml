@@ -19,8 +19,6 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-      target: development
-    command: npm run start:prod
     volumes:
       - .:/app
     ports:

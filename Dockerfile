@@ -1,13 +1,15 @@
 FROM node:18-alpine As development
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY --chown=node:node package*.json ./
+COPY package*.json ./
 
 RUN npm ci
 
-COPY --chown=node:node . .
+RUN npm install
 
-RUN npm run build
+COPY . .
 
-USER node
+EXPOSE 3000
+
+CMD ["npm", "run", "start:dev"]
