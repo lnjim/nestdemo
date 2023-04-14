@@ -3,6 +3,7 @@ import { CreatedUserRequest } from './users.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
+import { UpdatedUserRequest } from './users.dto';
 @Injectable()
 export class UsersService {
   private users: Array<User>;
@@ -15,8 +16,8 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  public getUser(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+  public async getUser(id: string): Promise<User> {
+    return await this.userRepository.findOneBy({ id });
   }
 
   public async createUser(user: CreatedUserRequest) {
@@ -29,34 +30,12 @@ export class UsersService {
     return 'User created';
   }
 
-  // public async updateUser(id: string, updatedUser: UpdatedUser) {
-  //   const foundUser = this.users.find((user) => {
-  //     return id === user.id;
-  //   });
-
-  //   if (foundUser) {
-  //     this.users = this.users.map((user) => {
-  //       if (user.id === foundUser.id) {
-  //         return {
-  //           ...user,
-  //           ...updatedUser
-  //         };
-  //       }
-
-  //       return user;
-  //     });
-  //   }
-  // }
+  public async updateUser(id: string, updatedUser: UpdatedUserRequest) {
+    return await this.userRepository.update({ id }, updatedUser);
+  }
 
   public async deleteUser(id: string) {
-    const foundUser = this.users.find((user) => {
-      return id === user.id;
-    });
-
-    if (foundUser) {
-      this.users = this.users.filter((user) => {
-        return user.id !== foundUser.id;
-      });
-    }
+    await this.userRepository.delete({ id });
+    return 'User deleted';
   }
 }

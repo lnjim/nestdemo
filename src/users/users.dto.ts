@@ -2,7 +2,8 @@ import {
   IsString,
   IsDefined,
   IsEmail,
-  IsStrongPassword
+  IsStrongPassword,
+  IsOptional
 } from 'class-validator';
 
 export class CreatedUserRequest {
@@ -15,18 +16,29 @@ export class CreatedUserRequest {
   @IsDefined()
   @IsStrongPassword()
   password: string;
-}
-
-export class UpdatedUser {
-  id: string;
 
   @IsString()
   @IsDefined()
+  @IsStrongPassword()
+  confirmPassword: string;
+}
+
+export class UpdatedUserRequest {
+  @IsString()
+  @IsDefined()
   @IsEmail()
+  @IsOptional()
   email: string;
 
   @IsString()
   @IsDefined()
   @IsStrongPassword()
+  @IsOptional()
   password: string;
+
+  @IsString()
+  @IsDefined()
+  @IsStrongPassword()
+  @IsOptional()
+  confirmPassword: string;
 }

@@ -9,14 +9,16 @@ export class User {
     unique: true,
     type: 'varchar',
     length: 50,
-    nullable: false
+    nullable: false,
+    update: true
   })
   email: string;
 
   @Column({
     type: 'varchar',
     length: 60,
-    nullable: false
+    nullable: false,
+    update: true
   })
   password: string;
 }
