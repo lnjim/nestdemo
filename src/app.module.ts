@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -8,13 +9,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: 'postgres',
       host: 'db',
       port: 5432,
-      username: 'test',
-      password: 'password',
-      database: 'nest',
-      synchronize: true,
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      synchronize: true, // TODO: Remove this in production
       autoLoadEntities: true
     }),
-    UsersModule
+    UsersModule,
+    PostsModule
   ],
   controllers: [],
   providers: []

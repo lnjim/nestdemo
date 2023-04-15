@@ -27,35 +27,38 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
+setup le .env docker
 
 ```bash
-$ npm install
+$ docker compose build --pull --no-cache
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ docker compose up -d
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# exec nest cmd
+$ docker compose exec app npx nest CMD
 ```
 
+## End
+```bash
+# development
+$ docker compose down
+```
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ docker compose exec app npm run test
 
 # e2e tests
-$ npm run test:e2e
+$ docker compose exec app npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+$ docker compose exec app npm run test:cov
 ```
 ## License
 

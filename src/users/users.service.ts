@@ -6,8 +6,6 @@ import { User } from './users.entity';
 import { UpdatedUserRequest } from './users.dto';
 @Injectable()
 export class UsersService {
-  private users: Array<User>;
-
   public constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
