@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
 import { UpdatedUserRequest } from './users.dto';
+import { UserRole } from './users.enum';
 @Injectable()
 export class UsersService {
   public constructor(
@@ -16,6 +17,10 @@ export class UsersService {
 
   public async getUser(id: string): Promise<User> {
     return await this.userRepository.findOneBy({ id });
+  }
+
+  public async getUserByEmail(email: string): Promise<User> {
+    return await this.userRepository.findOneBy({ email });
   }
 
   public async createUser(user: CreatedUserRequest) {
@@ -35,5 +40,23 @@ export class UsersService {
   public async deleteUser(id: string) {
     await this.userRepository.delete({ id });
     return 'User deleted';
+  }
+
+  public async seed() {
+    await this.userRepository.clear();
+
+    const administrator = this.userRepository.create({
+      email: 'administrator@domain.com',
+      password: 'password',
+      role: UserRole.Administrator
+    });
+
+    const user = this.userRepository.create({
+      email: 'user@domain.com',
+      password: 'password',
+      role: UserRole.User
+    });
+
+    await this.userRepository.save([administrator, user]);
   }
 }

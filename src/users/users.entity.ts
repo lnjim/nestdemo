@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import { hash, compare } from 'bcrypt';
+import { UserRole } from './users.enum';
 
 @Entity()
 export class User {
@@ -22,8 +24,25 @@ export class User {
   })
   password: string;
 
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.User,
+    nullable: false
+  })
+  public role: UserRole;
+
   @BeforeInsert()
-  emailToLowerCase() {
+  public emailToLowerCase() {
     this.email = this.email.toLowerCase();
+  }
+
+  @BeforeInsert()
+  public async hashPassword() {
+    this.password = await hash(this.password, 10);
+  }
+
+  public isValidPassword(password: string) {
+    return compare(password, this.password);
   }
 }

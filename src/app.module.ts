@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModule } from './posts/posts.module';
+import { SeedModule } from './seed/seed.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { PostsModule } from './posts/posts.module';
       autoLoadEntities: true
     }),
     UsersModule,
-    PostsModule
+    PostsModule,
+    SeedModule,
+    AuthModule
   ],
   controllers: [],
   providers: []

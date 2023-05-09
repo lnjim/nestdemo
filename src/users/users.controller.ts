@@ -13,8 +13,10 @@ import {
 } from '@nestjs/common';
 import { CreatedUserRequest } from './users.dto';
 import { UsersService } from './users.service';
-import { WithoutPassword, HashPassword } from './users.decorator';
+import { WithoutPassword, CheckConfirmPassword } from './users.decorator';
 import { UpdatedUserRequest } from './users.dto';
+import { UserRole } from './users.enum';
+import { Authenticated, Role } from 'src/auth/auth.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -24,6 +26,8 @@ export class UsersController {
   @HttpCode(200)
   @Header('X-School', 'ESGI')
   @WithoutPassword()
+  @Role(UserRole.Administrator)
+  @Authenticated()
   public getUsers() {
     return this.usersService.getUsers();
   }
@@ -45,7 +49,7 @@ export class UsersController {
   @Patch(':user')
   @HttpCode(200)
   @Header('X-School', 'ESGI')
-  @HashPassword()
+  @CheckConfirmPassword()
   public updateUser(
     @Param('user', ParseUUIDPipe) user: string,
     @Body(ValidationPipe) body: UpdatedUserRequest
