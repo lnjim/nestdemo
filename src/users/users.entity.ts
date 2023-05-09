@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  BeforeInsert,
+  BeforeUpdate
+} from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import { UserRole } from './users.enum';
 
@@ -33,11 +39,13 @@ export class User {
   public role: UserRole;
 
   @BeforeInsert()
+  @BeforeUpdate()
   public emailToLowerCase() {
     this.email = this.email.toLowerCase();
   }
 
   @BeforeInsert()
+  @BeforeUpdate()
   public async hashPassword() {
     this.password = await hash(this.password, 10);
   }

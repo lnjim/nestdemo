@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatedUserRequest } from './users.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
 import { UpdatedUserRequest } from './users.dto';
 import { UserRole } from './users.enum';
+import { checkConfirmPassword } from '../helpers';
 @Injectable()
 export class UsersService {
   public constructor(
@@ -25,7 +26,8 @@ export class UsersService {
 
   public async createUser(user: CreatedUserRequest) {
     try {
-      await this.userRepository.insert(user);
+      const createUser = this.userRepository.create(user);
+      await this.userRepository.save(createUser);
     } catch (error) {
       return error;
     }
@@ -34,7 +36,22 @@ export class UsersService {
   }
 
   public async updateUser(id: string, updatedUser: UpdatedUserRequest) {
-    return await this.userRepository.update({ id }, updatedUser);
+    if (updatedUser.password) {
+      const res = checkConfirmPassword(
+        updatedUser.password,
+        updatedUser.confirmPassword
+      );
+      if (!res) {
+        throw new BadRequestException('Password not match');
+      }
+    }
+    delete updatedUser.confirmPassword;
+
+    if (Object.values(updatedUser).length === 0)
+      throw new BadRequestException('No data to update');
+
+    const user = await this.userRepository.findOneBy({ id });
+    return await this.userRepository.save(Object.assign(user, updatedUser));
   }
 
   public async deleteUser(id: string) {

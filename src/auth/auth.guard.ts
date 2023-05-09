@@ -2,12 +2,14 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JsonWebTokenError } from 'jsonwebtoken';
+import { UserRole } from 'src/users/users.enum';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -20,7 +22,7 @@ export class AuthenticationGuard implements CanActivate {
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-
+    const paramsId = request.params?.id;
     const authorizationHeader = request.headers.authorization;
 
     if (!authorizationHeader) {
@@ -46,6 +48,16 @@ export class AuthenticationGuard implements CanActivate {
       }
 
       const role = this.reflector.get<string>('role', context.getHandler());
+
+      if (user.role === UserRole.Administrator) {
+        return true;
+      }
+
+      if (paramsId && payload.id !== paramsId) {
+        throw new ForbiddenException(
+          'User is not allowed to access this resource'
+        );
+      }
 
       if (!role) {
         return true;

@@ -1,5 +1,11 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  CanActivate,
+  ExecutionContext,
+  Injectable
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { checkConfirmPassword } from 'src/helpers';
 
 @Injectable()
 export class CheckConfirmPasswordGuard implements CanActivate {
@@ -10,8 +16,9 @@ export class CheckConfirmPasswordGuard implements CanActivate {
       .switchToHttp()
       .getRequest().body;
 
-    if (!password) return true;
-    if (password !== confirmPassword) return false;
+    const res = checkConfirmPassword(password, confirmPassword);
+
+    if (!res) throw new BadRequestException('Password not match');
 
     return true;
   }
